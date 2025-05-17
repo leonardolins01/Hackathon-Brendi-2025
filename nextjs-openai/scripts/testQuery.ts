@@ -3,6 +3,8 @@ import 'dotenv/config';
 import { generateQuery } from '../lib/llm/generateQuery';
 import { runQueryOnCSV } from '../lib/data/queryExecutor';
 import { generateNaturalAnswer } from '../lib/llm/generateNaturalAnswer';
+import { describeCSVSchema } from '../lib/llm/describeCSV';
+
 
 async function main() {
   try {
@@ -15,15 +17,13 @@ async function main() {
     const tableName = 'pedidos_comida';
     const csvPath = 'datasets/pedidos_comida.csv';
 
-    const schema = {
-      nome_usuario: "Nome do cliente que fez o pedido",
-      pedido: "Descrição do pedido realizado, incluindo quantidade",
-      categoria: "Categoria da comida pedida (Pizza, Sushi, etc.)",
-      preco: "Preço total do pedido em reais",
-      meio_pedido: "Meio utilizado para fazer o pedido (App, Site, etc.)",
-      data_pedido: "Data e hora em que o pedido foi feito",
-      restaurante: "Nome do restaurante onde o pedido foi feito"
-    };
+    const allSchemas = await describeCSVSchema();
+    const schema = allSchemas[tableName];
+
+    if (!schema) {
+      console.error(`❌ Não foi possível encontrar o schema para a tabela "${tableName}"`);
+      process.exit(1);
+    }
 
     const question = "Quais cliente fizeram 2 ou mais pedidos?";
 
