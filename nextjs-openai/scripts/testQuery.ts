@@ -2,6 +2,7 @@ import 'dotenv/config';
 
 import { generateQuery } from '../lib/llm/generateQuery';
 import { runQueryOnCSV } from '../lib/data/queryExecutor';
+import { generateNaturalAnswer } from '../lib/llm/generateNaturalAnswer';
 
 async function main() {
   try {
@@ -12,7 +13,7 @@ async function main() {
     }
 
     const tableName = 'pedidos_comida';
-    const csvPath = 'datasets/pedidos_comida.csv'; // ou ajuste se estiver em outro caminho
+    const csvPath = 'datasets/pedidos_comida.csv';
 
     const schema = {
       nome_usuario: "Nome do cliente que fez o pedido",
@@ -22,11 +23,11 @@ async function main() {
       meio_pedido: "Meio utilizado para fazer o pedido (App, Site, etc.)",
       data_pedido: "Data e hora em que o pedido foi feito",
       restaurante: "Nome do restaurante onde o pedido foi feito"
-
     };
 
-    const question = "Quem fez mais pedidos?";
+    const question = "Quais cliente fizeram 2 ou mais pedidos?";
 
+    // 1. Gerar query com LLM
     const query = await generateQuery({
       tableName,
       schema,
@@ -36,6 +37,7 @@ async function main() {
     console.log("\n✅ Query gerada:");
     console.log(query);
 
+    // 2. Executar a query no CSV
     const result = await runQueryOnCSV({
       csvPath,
       tableName,
@@ -44,6 +46,16 @@ async function main() {
 
     console.log("\n📊 Resultado da query:");
     console.log(result);
+
+    // 3. Gerar resposta natural com base na pergunta + schema + resultado
+    const naturalAnswer = await generateNaturalAnswer({
+      schema,
+      question,
+      queryResult: result
+    });
+
+    console.log("\n🗣️ Resposta final ao usuário:");
+    console.log(naturalAnswer);
   } catch (error) {
     console.error("❌ Erro durante o processo:");
     console.error(error);
