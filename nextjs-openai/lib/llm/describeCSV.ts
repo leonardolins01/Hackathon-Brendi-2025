@@ -42,7 +42,7 @@ Regras:
 `.trim();
 
   const { object } = await generateObject({
-    model: openai('gpt-4o-mini-2024-07-18o'),
+    model: openai('gpt-4o-mini'),
     system: systemPrompt,
     prompt: prompt.trim(),
     output: "no-schema", // ✅ Aqui está o ponto importante
