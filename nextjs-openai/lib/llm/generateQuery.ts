@@ -36,7 +36,7 @@ Pergunta: ${question}
 `.trim();
 
   const { text } = await generateText({
-    model: openai('gpt-4o'),
+    model: openai('gpt-4o-mini'),
     system: systemPrompt,
     prompt: userPrompt,
     maxTokens: 300
