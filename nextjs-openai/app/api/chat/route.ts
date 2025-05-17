@@ -1,5 +1,6 @@
 import { streamText, UIMessage } from 'ai';
 import { openai } from '@ai-sdk/openai';
+import { describeCSVSchema } from '@/lib/llm/describeCSV';
 
 export async function POST(request: Request) {
   const { messages }: { messages: UIMessage[] } = await request.json();
@@ -10,6 +11,9 @@ export async function POST(request: Request) {
       headers: { 'Content-Type': 'application/json' }
     });
   }
+
+  const schema = await describeCSVSchema();
+  console.log('🔍 JSON de schema gerado pela IA:\n', JSON.stringify(schema, null, 2));
 
   try {
     const apiKey = process.env.OPENAI_API_KEY;
@@ -24,7 +28,7 @@ export async function POST(request: Request) {
     let truncatedMessages = messages.slice(-8);
 
     const result = streamText({
-      model: openai('gpt-4o-mini-2024-07-18'),
+      model: openai("gpt-4o"),
       system: 'You are a helpful assistant.',
       messages: truncatedMessages,
       maxTokens: 500,
