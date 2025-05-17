@@ -4,11 +4,6 @@ import { generateObject } from 'ai';
 import { z } from 'zod';
 import readline from "readline";
 
-const grammarSchema = z.object({
-  subject: z.string().describe("The subject of the sentence"),
-  verb: z.string().describe("The verb of the sentence"),
-  object: z.string().describe("The object of the sentence")
-});
 
 async function run() {
   config();
@@ -27,9 +22,9 @@ async function run() {
     rl.question("Write a phrase: ", async (message) => {
       const { object } = await generateObject({
         model: openai("gpt-4o-mini-2024-07-18"),
-        system: "You are a grammar analysis expert. Break down sentences into their grammatical components.",
+        system: "",
         prompt: `Analyze this phrase: ${message}`,
-        schema: grammarSchema
+        output: "no-schema",
       });
 
       console.log(object);
